@@ -1,0 +1,39 @@
+[package]
+name = "murmur-mac"
+version = "1.0.0"
+edition = "2021"
+description = "Murmur — Offline Headphone Control for macOS"
+
+[[bin]]
+name = "murmur"
+path = "src/main.rs"
+
+[dependencies]
+async-trait = "0.1"
+bytemuck = "1"
+eframe = "0.31"
+egui = "0.31"
+egui_glow = "0.31"
+glow = "0.16"
+tokio = { version = "1", features = ["rt-multi-thread", "sync", "time", "macros"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = "0.4"
+directories = "5"
+thiserror = "2"
+log = "0.4"
+env_logger = "0.11"
+rfd = "0.15"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+tray-icon = "0.19"
+
+[build-dependencies]
+cc = "1"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+opt-level = "s"
+panic = "abort"
