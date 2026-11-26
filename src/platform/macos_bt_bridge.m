@@ -427,7 +427,7 @@ int murmur_rfcomm_is_connected(void *ptr) {
     BOOL closed = handle.closed;
     IOBluetoothRFCOMMChannel *chan = handle.channel;
     [handle.cond unlock];
-    return (!closed && chan != nil && [chan isOpen]) ? 1 : 0;
+    return (!closed && chan != nil) ? 1 : 0;
 }
 
 void murmur_rfcomm_disconnect(void *ptr) {
@@ -582,11 +582,11 @@ int murmur_l2cap_write(void *ptr, const uint8_t *buf, size_t len) {
     __block int status = 0;
 
     murmur_run_on_bt_thread(^{
-        if (handle.closed || !handle.channel || ![handle.channel isOpen]) {
+        if (handle.closed || !handle.channel) {
             status = -1;
             return;
         }
-        BluetoothL2CAPMTU mtu = [handle.channel getOutgoingMTU];
+        BluetoothL2CAPMTU mtu = handle.channel.outgoingMTU;
         size_t chunkCap = mtu > 0 ? (size_t)mtu : 672;
         size_t offset = 0;
         const uint8_t *raw = (const uint8_t *)payload.bytes;
@@ -614,7 +614,7 @@ int murmur_l2cap_is_connected(void *ptr) {
     BOOL closed = handle.closed;
     IOBluetoothL2CAPChannel *chan = handle.channel;
     [handle.cond unlock];
-    return (!closed && chan != nil && [chan isOpen]) ? 1 : 0;
+    return (!closed && chan != nil) ? 1 : 0;
 }
 
 void murmur_l2cap_disconnect(void *ptr) {
